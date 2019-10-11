@@ -185,11 +185,11 @@ public class LibertyRestEndpoint extends Application {
         }
         requestTimeStamp = currentRequestTimeStamp;
 
-        if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
+       /* if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .header(HttpHeaders.RETRY_AFTER, " :=120")
                     .build();
-        }
+        }*/
       int starsReviewer1 = -1;
       int starsReviewer2 = -1;
 
