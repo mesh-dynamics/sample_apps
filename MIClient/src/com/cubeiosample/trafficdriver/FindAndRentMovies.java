@@ -1,5 +1,6 @@
 package com.cubeiosample.trafficdriver;
 
+import java.io.File;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
@@ -9,8 +10,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,18 +66,21 @@ public class FindAndRentMovies {
         private CloseableHttpClient httpClient;
         private HttpPost httpPost;
         private String postEntity;
+        private File latencyFile;
+        private long elapsedTime;
 
         private HttpClientContext context;
         String host;
         String[] pathSegments;
         String keyWord;
 
-        public CubeHttpClientConnThread(CloseableHttpClient httpClient, String host, String[] pathSegments, String movie) {
+        public CubeHttpClientConnThread(CloseableHttpClient httpClient, String host, String[] pathSegments, String movie, File latencyFile) {
             this.context = HttpClientContext.create();
             this.httpClient = httpClient;
             this.host = host;
             this.pathSegments = pathSegments;
             this.keyWord = movie;
+            this.latencyFile = latencyFile;
         }
 
 
@@ -80,6 +88,8 @@ public class FindAndRentMovies {
         public void run() {
             CloseableHttpResponse response = null;
             try {
+                Instant start = Instant.now();
+
                 URIBuilder uriBuilder = new URIBuilder();
 
                 List<String> pathSegmentsList = Stream.concat(Arrays.asList(pathSegments).stream() , Stream.of("listmovies")).collect(Collectors.toList());
@@ -180,6 +190,18 @@ public class FindAndRentMovies {
                 response.close();
                 System.out.println("return movie result: " + returnMovieResult.toString() + "\n\n");
 
+                FileWriter latencyFileWriter = new FileWriter(latencyFile, true);
+                Instant end = Instant.now();
+                Duration elapsedTime = Duration.between(start, end);
+                this.elapsedTime = elapsedTime.toMillis();
+
+                synchronized (latencyFile) {
+                  BufferedWriter bufferedWriter = new BufferedWriter(latencyFileWriter);
+                  bufferedWriter.write(String.valueOf(this.elapsedTime));
+                  bufferedWriter.newLine();
+                  bufferedWriter.close();
+                }
+
             } catch (IOException | URISyntaxException ex) {
                 System.out.println("Error occurred :: " + ex.getMessage());
             } finally {
@@ -258,11 +280,18 @@ public class FindAndRentMovies {
 
         int nm = numMovies.orElse(movies.length);
 
+        File latencyFile = new File("./latency.txt");
+        if (!latencyFile.exists()) {
+          latencyFile.createNewFile();
+        }
+
+        long totalElapsedTime[] = {0};
+
         // play traffic for recording.
         List<CubeHttpClientConnThread> connThreads = new ArrayList<>();
         for (int i = 0; i < nm; i++) {
             String movie = movies[i % movies.length];
-            CubeHttpClientConnThread clientConnThread = new CubeHttpClientConnThread(httpClient, host, pathSegments, movie);
+            CubeHttpClientConnThread clientConnThread = new CubeHttpClientConnThread(httpClient, host, pathSegments, movie, latencyFile);
             connThreads.add(clientConnThread);
             clientConnThread.start();
         }
@@ -270,9 +299,13 @@ public class FindAndRentMovies {
         connThreads.forEach(thread -> {
             try {
                 thread.join();
+                totalElapsedTime[0] += thread.elapsedTime;
             } catch (InterruptedException e) {
                 System.out.println("Thread interrupt exception :: " + e.getMessage());
             }
         });
+
+      System.out.println("Total elapsed time in milliseconds: " + totalElapsedTime[0] + " "
+          + "Avg. Elapsed time in milliseconds: " + totalElapsedTime[0]/nm);
     }
 }
