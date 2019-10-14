@@ -307,5 +307,12 @@ public class FindAndRentMovies {
 
       System.out.println("Total elapsed time in milliseconds: " + totalElapsedTime[0] + " "
           + "Avg. Elapsed time in milliseconds: " + totalElapsedTime[0]/nm);
+
+        FileWriter latencyFileWriter = new FileWriter(latencyFile, true);
+        BufferedWriter bufferedWriter = new BufferedWriter(latencyFileWriter);
+        bufferedWriter.write("Total elapsed time in milliseconds: " + totalElapsedTime[0]);
+        bufferedWriter.newLine();
+        bufferedWriter.write("Avg. Elapsed time in milliseconds: " + totalElapsedTime[0]/nm);
+        bufferedWriter.close();
     }
 }
