@@ -77,7 +77,7 @@
 		    </execution>
 		  </executions>
 		  <configuration>
-		    <repository>cubeiocorp/sample_apps-mirest</repository>
+		    <repository>cubeiocorp/sample-apps-mirest</repository>
 		    <tag>${docker.tag}</tag>
 		    <buildArgs>
 		      <WAR_FILE>${project.build.finalName}.war</WAR_FILE>
@@ -134,9 +134,9 @@
     <version.jaeger>0.32.0</version.jaeger>
     <version.json>20180813</version.json>
     <version.mysql>5.1.46</version.mysql>
-    <version.log4j>1.2.17</version.log4j>
+    <version.log4j>2.11.1</version.log4j>
     <version.java>11</version.java>
-    <docker.tag>demo-1.0</docker.tag>
+    <docker.tag>V1-SNAPSHOT</docker.tag>
   </properties>
   <dependencies>
   	<dependency>
@@ -169,11 +169,21 @@
        <artifactId>mysql-connector-java</artifactId>
        <version>${version.mysql}</version>
     </dependency>
-    <dependency>
-		<groupId>log4j</groupId>
-		<artifactId>log4j</artifactId>
-		<version>${version.log4j}</version>
-	</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${version.log4j}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${version.log4j}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${version.log4j}</version>
+		</dependency>
 	 <dependency>
        <groupId>commons-dbcp</groupId>
        <artifactId>commons-dbcp</artifactId>

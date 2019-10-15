@@ -35,12 +35,12 @@ public class RandomResponseFilter implements ContainerRequestFilter {
         }
         requestTimeStamp = currentRequestTimeStamp;
 
-        if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
-            LOGGER.debug("Forcing the request to abort");
-            containerRequestContext.abortWith(
-                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .header(HttpHeaders.RETRY_AFTER, " :=120")
-                            .build());
-        }
+//        if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
+//            LOGGER.info("Forcing the request to abort");
+//            containerRequestContext.abortWith(
+//                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+//                            .header(HttpHeaders.RETRY_AFTER, " :=120")
+//                            .build());
+//        }
     }
 }
