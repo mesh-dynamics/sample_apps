@@ -43,7 +43,7 @@ public class BookInfo {
         ClientConfig clientConfig = new ClientConfig()
                 .property(ClientProperties.READ_TIMEOUT, 600*1000)
                 .property(ClientProperties.CONNECT_TIMEOUT, 600*1000);
-        clientConfig.register(RestClientTrafficInterceptor.class);
+        //clientConfig.register(RestClientTrafficInterceptor.class);
         restClient = ClientBuilder.newClient(clientConfig);
         //bookInfoService = restClient.target(PRODUCTPAGE_URI);
         bookDetailsService = restClient.target(BOOKDETAILS_URI);
