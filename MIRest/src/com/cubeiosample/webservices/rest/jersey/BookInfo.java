@@ -76,7 +76,7 @@ public class BookInfo {
                 For now it is updated every 60 seconds assuming we dont run replays too often
              */
             long currentRequestTimeStamp = new Date().getTime();
-            if (requestTimeStamp + config.TIME_BETWEEN_RUNS > currentRequestTimeStamp) {
+            /*if (requestTimeStamp + config.TIME_BETWEEN_RUNS > currentRequestTimeStamp) {
                 LOGGER.debug("Random fail percent updated");
                 randomGuassianPercentGivenStdDevAndMean = random.nextGaussian() * config.FAIL_PERCENT_STD_DEV + config.FAIL_PERCENT;
             }
@@ -85,24 +85,27 @@ public class BookInfo {
             if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
                 JSONObject detailsResult = null;
                 bookInfo.put("details", detailsResult);
-            } else {
-                response = RestUtils.callWithRetries(tracer,
-                        bookDetailsService.path("details").path(String.format("%d", id)).request(MediaType.APPLICATION_JSON),
-                        null, "GET", 3, config.ADD_TRACING_HEADERS);
-                result = new JSONObject(response.readEntity(String.class));
-                bookInfo.put("details", result);
-            }
+            } else {*/
+            response = RestUtils.callWithRetries(tracer,
+                bookDetailsService.path("details").path(String.format("%d", id))
+                    .request(MediaType.APPLICATION_JSON),
+                null, "GET", 3, config.ADD_TRACING_HEADERS);
+            result = new JSONObject(response.readEntity(String.class));
+            bookInfo.put("details", result);
+            //}
             
             // get ratings
             response = RestUtils.callWithRetries(tracer, 
-        			bookRatingsService.path("ratings").path(String.format("%d", id)).request(MediaType.APPLICATION_JSON), 
+        			bookRatingsService.path("ratings").path(String.format("%d", id))
+                        .request(MediaType.APPLICATION_JSON),
         	   	    null, "GET", 3, config.ADD_TRACING_HEADERS);
             result = new JSONObject(response.readEntity(String.class));
             bookInfo.put("ratings", result);
 
             // get reviews
             response = RestUtils.callWithRetries(tracer, 
-        			bookReviewsService.path("reviews").path(String.format("%d", id)).request(MediaType.APPLICATION_JSON), 
+        			bookReviewsService.path("reviews").path(String.format("%d", id))
+                        .request(MediaType.APPLICATION_JSON),
         	   	    null, "GET", 3, config.ADD_TRACING_HEADERS);
             result = new JSONObject(response.readEntity(String.class));
             bookInfo.put("reviews", result);
