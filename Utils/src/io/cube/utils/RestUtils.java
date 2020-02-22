@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import io.md.utils.CommonUtils;
 import io.opentracing.Tracer;
 
 
@@ -20,7 +21,7 @@ public class RestUtils {
     int numAttempts = 0;
     // inject headers
     if (addHeaders) {
-    	Tracing.addTraceHeaders(tracer, req, requestType);
+      CommonUtils.addTraceHeaders(req, requestType);
     }
     while (numAttempts < numRetries) {
       try {

@@ -1,0 +1,38 @@
+version: '3.2'
+services:
+  details:
+    image:  cubeiocorp/details:V1-SNAPSHOT
+    container_name: details
+    #build: ./details
+    expose:
+      - 9080
+  ratings:
+    image: cubeiocorp/ratings:V1-SNAPSHOT
+    container_name: ratings
+    #build: ./ratings
+    expose:
+      - 9080
+  reviews:
+    image: cubeiocorp/reviews:V1-SNAPSHOT
+    container_name: reviews
+    #build: ./reviews/reviews-wlpcfg
+    expose:
+      - 9080
+  restwrapjdbc:
+    image: cubeiocorp/restwrapjdbc:demo-1.0
+    container_name: restwrapjdbc
+    #build: ./RestWrapJDBC
+    expose:
+      - 8080
+  mirest:
+    image: cubeiocorp/sample_apps-mirest:demo-1.0
+    container_name: mirest
+    build: ./MIRest
+    #network_mode: "host"
+    expose:
+      - 8080
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host

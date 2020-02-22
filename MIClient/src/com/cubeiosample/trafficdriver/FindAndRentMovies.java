@@ -76,7 +76,7 @@ public class FindAndRentMovies {
 		if (useAuthToken) {
 			getToken();
 		}
-		warmMovieCache();
+		//warmMovieCache();
 		/*
 		 commenting this since listeners will already be deployed by the script
          also, need to use the traffic driver from the create collection script, without any
@@ -86,12 +86,25 @@ public class FindAndRentMovies {
 
 		int nm = numMovies.orElse(movies.length);
 
+		for (int i=0; i< 20000; i+=20) {
+			System.out.println("Request No. " + i);
+			Response response  =
+				callWithRetries(targetService.path("reviewslist").queryParam("count", i)
+					.request().header(HttpHeaders.AUTHORIZATION, token)
+					, null, true, 1);
+			String reponseString = response.readEntity(String.class);
+			double size = (reponseString.length() * 2.0)/1024;
+			System.out.println("Response size :: " + size + " KB");
+			//System.out.println(response.readEntity(String.class));
+		}
+
 		  // play traffic for recording.
-		for (int i=0; i<nm; i++) {
+		/*for (int i=0; i<nm; i++) {
 			System.out.println("Request Number: " + i);
 			String movie = movies[i % movies.length];
 			  // list films
-			  Response response1 = callWithRetries(targetService.path("listmovies").queryParam("filmName", movie).request(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, token), null, true, 1);
+			  Response response1 = callWithRetries(targetService.path("listmovies")
+				  .queryParam("filmName", movie).request(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, token), null, true, 1);
 			  if (response1 == null || response1.getStatus() != 200) {
 				  continue;
 			  }	
@@ -165,8 +178,10 @@ public class FindAndRentMovies {
 			  returnMovieInfo.put("userId", userId);
 			  returnMovieInfo.put("staffId", staffId);
 			  returnMovieInfo.put("rent", rentalResult.getDouble("rent"));  
-			  Response response4 = callWithRetries(targetService.path("returnmovie").request().header(HttpHeaders.AUTHORIZATION, token), 
-					  Entity.entity(returnMovieInfo.toString(), MediaType.APPLICATION_JSON), false, 1);
+			  Response response4 = callWithRetries(targetService.path("returnmovie")
+					  .request().header(HttpHeaders.AUTHORIZATION, token),
+					  Entity.entity(returnMovieInfo.toString(), MediaType.APPLICATION_JSON)
+				  , false, 1);
 			  String responseAsString = response4.readEntity(String.class);
 			  try {
 				  JSONObject returnMovieResult = new JSONObject(responseAsString);
@@ -179,8 +194,10 @@ public class FindAndRentMovies {
 				  System.out.println(response4.getStatus());
 			  }
 			  response4.close();
-			  
-		  }
+		  }*/
+
+
+
 	}
 	
 	
