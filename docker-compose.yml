@@ -1,0 +1,42 @@
+version: '3.2'
+services:
+  details:
+    image:  details:V13
+    container_name: details
+    #build: ./details
+    expose:
+      - 9080
+  ratings:
+    image: ratings:V13
+    container_name: ratings
+    #build: ./ratings
+    expose:
+      - 9080
+  reviews:
+    image: reviews:V13
+    container_name: reviews
+    #build: ./reviews/reviews-wlpcfg
+    expose:
+      - 9080
+  restwrapjdbc:
+    image: cubeiocorp/restwrapjdbc:V13
+    container_name: restwrapjdbc
+    #build: ./RestWrapJDBC
+    expose:
+      - 8085
+  mirest:
+    image: cubeiocorp/mirest:V13
+    container_name: mirest
+    #command: nodemon --debug=5858
+    #build: ./MIRest
+    #network_mode: "host"
+#    expose:
+#      - 8080
+#      - 5858
+    ports:
+       - 8080:8080
+       #- 5858:5858
+#      - target: 8080
+#        published: 8080
+#        protocol: tcp
+#        mode: hosts

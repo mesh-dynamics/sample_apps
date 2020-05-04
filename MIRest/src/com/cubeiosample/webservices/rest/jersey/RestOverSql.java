@@ -1,5 +1,8 @@
 package com.cubeiosample.webservices.rest.jersey;
 
+import io.cube.jaxrs.egress.ClientLoggingFilter;
+import io.cube.jaxrs.egress.ClientMockingFilter;
+import io.cube.jaxrs.egress.ClientTracingFilter;
 import io.cube.utils.RestUtils;
 import io.opentracing.Tracer;
 
@@ -20,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+
 public class RestOverSql {
   private Client restClient = null;
   private WebTarget restJDBCService = null;
@@ -37,7 +41,10 @@ public class RestOverSql {
      ClientConfig clientConfig = new ClientConfig()
         .property(ClientProperties.READ_TIMEOUT, 100000)  
         .property(ClientProperties.CONNECT_TIMEOUT, 10000);
-    restClient = ClientBuilder.newClient(clientConfig);
+    restClient = ClientBuilder.newClient(clientConfig)
+                 .register(ClientLoggingFilter.class)
+	             .register(ClientTracingFilter.class)
+	             .register(ClientMockingFilter.class);
       
     LOGGER.debug("RESTWRAPJDBC_URI is " + config.RESTWRAPJDBC_URI);
     restJDBCService = restClient.target(config.RESTWRAPJDBC_URI);
