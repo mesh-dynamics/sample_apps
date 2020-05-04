@@ -235,6 +235,11 @@
 		  <artifactId>Utils</artifactId>
 		  <version>V1-SNAPSHOT</version>
 	  </dependency>
+		<dependency>
+			<groupId>io.cube</groupId>
+			<artifactId>md-jaxrs-interceptor</artifactId>
+			<version>1.2.0</version>
+		</dependency>
   </dependencies>
 
 </project>
