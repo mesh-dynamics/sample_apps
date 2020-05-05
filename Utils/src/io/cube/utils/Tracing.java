@@ -1,5 +1,6 @@
 package io.cube.utils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,11 +17,13 @@ import io.jaegertracing.Configuration.SamplerConfiguration;
 import io.jaegertracing.internal.JaegerTracer;
 import io.jaegertracing.internal.samplers.ConstSampler;
 import io.opentracing.Scope;
+import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
+import io.opentracing.propagation.Format.Builtin;
 import io.opentracing.propagation.TextMap;
-import io.opentracing.propagation.TextMapExtractAdapter;
+import io.opentracing.propagation.TextMapAdapter;
 import io.opentracing.tag.Tags;
 
 
@@ -47,8 +50,12 @@ public final class Tracing {
       return config.getTracer();
     }
 
-    
+
     public static Scope startServerSpan(Tracer tracer, javax.ws.rs.core.HttpHeaders httpHeaders, String operationName) {
+        return startServerSpan(tracer, httpHeaders, operationName, Collections.emptyMap());
+    }
+
+    public static Scope startServerSpan(Tracer tracer, javax.ws.rs.core.HttpHeaders httpHeaders, String operationName, Map<String, String> tags) {
         // format the headers for extraction
         MultivaluedMap<String, String> rawHeaders = httpHeaders.getRequestHeaders();
         final HashMap<String, String> headers = new HashMap<String, String>();
@@ -58,7 +65,7 @@ public final class Tracing {
 
         Tracer.SpanBuilder spanBuilder;
         try {
-            SpanContext parentSpanCtx = tracer.extract(Format.Builtin.HTTP_HEADERS, new TextMapExtractAdapter(headers));
+            SpanContext parentSpanCtx = tracer.extract(Builtin.TEXT_MAP, new TextMapAdapter(headers));
             if (parentSpanCtx == null) {
                 spanBuilder = tracer.buildSpan(operationName);
             } else {
@@ -68,7 +75,9 @@ public final class Tracing {
             spanBuilder = tracer.buildSpan(operationName);
         }
         // TODO could add more tags like http.url
-        return spanBuilder.withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER).startActive(true);
+        Span span = spanBuilder.withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER).start();
+        tags.forEach(span::setTag);
+        return tracer.scopeManager().activate(span);
     }
     
 
