@@ -28,19 +28,19 @@ public class RandomResponseFilter implements ContainerRequestFilter {
             Ideally it should be updated with an API hook when a new replay starts.
             For now it is updated every 60 seconds assuming we dont run replays too often
          */
-        long currentRequestTimeStamp = new Date().getTime();
-        if (requestTimeStamp + config.TIME_BETWEEN_RUNS > currentRequestTimeStamp) {
-            LOGGER.debug("Random fail percent updated");
-            randomGuassianPercentGivenStdDevAndMean = random.nextGaussian() * config.FAIL_PERCENT_STD_DEV + config.FAIL_PERCENT;
-        }
-        requestTimeStamp = currentRequestTimeStamp;
-
-        if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
-            LOGGER.debug("Forcing the request to abort");
-            containerRequestContext.abortWith(
-                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .header(HttpHeaders.RETRY_AFTER, " :=120")
-                            .build());
-        }
+//        long currentRequestTimeStamp = new Date().getTime();
+//        if (requestTimeStamp + config.TIME_BETWEEN_RUNS > currentRequestTimeStamp) {
+//            LOGGER.debug("Random fail percent updated");
+//            randomGuassianPercentGivenStdDevAndMean = random.nextGaussian() * config.FAIL_PERCENT_STD_DEV + config.FAIL_PERCENT;
+//        }
+//        requestTimeStamp = currentRequestTimeStamp;
+//
+//        if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
+//            LOGGER.debug("Forcing the request to abort");
+//            containerRequestContext.abortWith(
+//                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+//                            .header(HttpHeaders.RETRY_AFTER, " :=120")
+//                            .build());
+//        }
     }
 }
