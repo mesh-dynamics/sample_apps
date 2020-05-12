@@ -11,7 +11,7 @@ record() {
 
 generate_traffic() {
   for ((i=1;i<=$1;i++)); do
-    curl -f --location --request GET 'http://jersy2x.dev.cubecorp.io:8080/minfo/listmovies/filmName=BEVERLY%20OUTLAW'
+    curl -f -X GET "http://jersy2x.dev.cubecorp.io:8080/minfo/listmovies?filmName=BEVERLY%20OUTLAW"
   done
 }
 
