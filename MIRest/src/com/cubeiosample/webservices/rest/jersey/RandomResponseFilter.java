@@ -28,6 +28,7 @@ public class RandomResponseFilter implements ContainerRequestFilter {
             Ideally it should be updated with an API hook when a new replay starts.
             For now it is updated every 60 seconds assuming we dont run replays too often
          */
+        //Removing in this branch for Jersey 2.x interceptor check
 //        long currentRequestTimeStamp = new Date().getTime();
 //        if (requestTimeStamp + config.TIME_BETWEEN_RUNS > currentRequestTimeStamp) {
 //            LOGGER.debug("Random fail percent updated");
