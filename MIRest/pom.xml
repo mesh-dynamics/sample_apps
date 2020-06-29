@@ -11,6 +11,14 @@
 		<version>V1-SNAPSHOT</version>
 	</parent>
 
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/cube-io-corp/interceptor-framework</url>
+		</repository>
+	</repositories>
+
   <dependencyManagement>
     <dependencies>
         <dependency>
@@ -63,35 +71,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-		  <groupId>com.spotify</groupId>
-		  <artifactId>dockerfile-maven-plugin</artifactId>
-		  <version>${version.dockerfile-maven}</version>
-		  <executions>
-		    <execution>
-		      <id>default</id>
-		      <goals>
-		        <goal>build</goal>
-		        <goal>push</goal>
-		      </goals>
-		    </execution>
-		  </executions>
-		  <configuration>
-		    <repository>cubeiocorp/sample_apps-mirest</repository>
-		    <tag>${docker.tag}</tag>
-		    <buildArgs>
-		      <WAR_FILE>${project.build.finalName}.war</WAR_FILE>
-		    </buildArgs>
-		  </configuration>
-
-		    <!-- <resources>
-		      <resource>
-		       <targetPath>/</targetPath>
-               <directory>${project.build.directory}</directory>
-               <include>${project.build.finalName}.war</include>
-		      </resource>
-		    </resources> -->
-	  </plugin>
     </plugins>
     <pluginManagement>
     	<plugins>
@@ -180,11 +159,6 @@
        <version>1.4</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.spotify/dockerfile-maven-plugin -->
-	<dependency>
-	    <groupId>com.spotify</groupId>
-	    <artifactId>dockerfile-maven-plugin</artifactId>
-	    <version>${version.dockerfile-maven}</version>
-	</dependency>
 	<!--  Also need the client dependencies for calling the rest over jdbc service -->
 	<dependency>
 	  	<!-- Needed for ClientBuilder; version is not aligned with version.jersey -->
@@ -235,6 +209,11 @@
 		  <artifactId>Utils</artifactId>
 		  <version>V1-SNAPSHOT</version>
 	  </dependency>
+		<dependency>
+			<groupId>io.cube</groupId>
+			<artifactId>md-jaxrs-interceptor</artifactId>
+			<version>1.2.0</version>
+		</dependency>
   </dependencies>
 
 </project>

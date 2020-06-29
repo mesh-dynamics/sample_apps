@@ -1,5 +1,8 @@
 package com.cubeiosample.webservices.rest.jersey;
 
+import io.cube.jaxrs.egress.ClientLoggingFilter;
+import io.cube.jaxrs.egress.ClientMockingFilter;
+import io.cube.jaxrs.egress.ClientTracingFilter;
 import io.cube.utils.RestUtils;
 import io.opentracing.Tracer;
 import org.apache.log4j.Logger;
@@ -43,7 +46,10 @@ public class BookInfo {
         ClientConfig clientConfig = new ClientConfig()
                 .property(ClientProperties.READ_TIMEOUT, 100000)
                 .property(ClientProperties.CONNECT_TIMEOUT, 10000);
-        restClient = ClientBuilder.newClient(clientConfig);
+        restClient = ClientBuilder.newClient(clientConfig)
+                    .register(ClientLoggingFilter.class)
+                    .register(ClientTracingFilter.class)
+                    .register(ClientMockingFilter.class);
         //bookInfoService = restClient.target(PRODUCTPAGE_URI);
         bookDetailsService = restClient.target(BOOKDETAILS_URI);
         bookRatingsService = restClient.target(BOOKRATINGS_URI);
@@ -82,16 +88,16 @@ public class BookInfo {
             }
             requestTimeStamp = currentRequestTimeStamp;
 
-            if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
-                JSONObject detailsResult = null;
-                bookInfo.put("details", detailsResult);
-            } else {
+//            if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
+//                JSONObject detailsResult = null;
+//                bookInfo.put("details", detailsResult);
+//            } else {
                 response = RestUtils.callWithRetries(tracer,
                         bookDetailsService.path("details").path(String.format("%d", id)).request(MediaType.APPLICATION_JSON),
                         null, "GET", 3, config.ADD_TRACING_HEADERS);
                 result = new JSONObject(response.readEntity(String.class));
                 bookInfo.put("details", result);
-            }
+           // }
             
             // get ratings
             response = RestUtils.callWithRetries(tracer, 
