@@ -42,7 +42,7 @@ public class RestAPIForJDBC {
         //private static String MYSQL_PWD = "cubeio";  // local docker host pwd
         String MYSQL_PWD = "cubeio12";  // AWS RDS pwd
 
-        String MYSQL_URI = "jdbc:cube:jdbc:mysql://sakila2.cnt3lftdrpew.us-west-2.rds.amazonaws.com:3306/sakila";
+        String MYSQL_URI = "jdbc:mysql://sakila2.cnt3lftdrpew.us-west-2.rds.amazonaws.com:3306/sakila";
 
         initJdbc(MYSQL_URI, MYSQL_USERNAME, MYSQL_PWD);
 
