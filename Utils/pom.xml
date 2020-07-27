@@ -113,5 +113,10 @@
         <artifactId>jaeger-client</artifactId>
         <version>${version.jaeger}</version>
     </dependency>
+<!--		<dependency>-->
+<!--			<groupId>io.cube</groupId>-->
+<!--			<artifactId>md-jdbcwrapper</artifactId>-->
+<!--			<version>1.2.1</version>-->
+<!--		</dependency>-->
   </dependencies>
 </project>
