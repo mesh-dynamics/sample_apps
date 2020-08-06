@@ -151,7 +151,41 @@ public class MovieRentalRest {
 		} 
 		return Response.ok().type(MediaType.APPLICATION_JSON).entity("[{}]").build();
 	}
-	
+
+	@Path("/listmoviesbyformparams")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response listMoviesByFormParams(@FormParam("filmName") String filmname,
+		@FormParam("keyword") String keyword,
+		@Context SecurityContext securityContext,
+		@Context HttpHeaders httpHeaders) {
+		JSONArray films = null;
+		try (Scope scope =  Tracing.startServerSpan(tracer, httpHeaders , "listmoviesbyformparams")) {
+
+			LOGGER.debug("list movies headers: " + httpHeaders.toString());
+			String listParams = filmname + ";" + keyword;
+			scope.span().setTag("listmovies", listParams);
+			films = lmc.getMovieList(filmname);
+			if (films != null) {
+				return Response.ok().type(MediaType.APPLICATION_JSON).entity(films.toString()).build();
+			}
+			films = lmc.getMovieList(keyword);
+			if (films != null) {
+				return Response.ok().type(MediaType.APPLICATION_JSON).entity(films.toString()).build();
+			}
+		} catch (Exception e) {
+			LOGGER.error("ListMovies args: " + filmname + ", " + keyword + "; " + e.toString());
+			return Response.serverError().type(MediaType.TEXT_PLAIN).entity(e.toString()).build();
+		}
+		return Response.ok().type(MediaType.APPLICATION_JSON).entity("[{}]").build();
+	}
+
+	@Path("/nocontent")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response noContent() {
+		return Response.noContent().build();
+	}
 	
 	@Path("/liststores")
 	@GET
