@@ -45,8 +45,8 @@ public class Config {
     public boolean RATINGS_5PT_SCALE = true;
     public int NUM_ACTORS_TO_DISPLAY = 2;
     public boolean CONCAT_BUG = false;
-    public double FAIL_PERCENT = 0.01;
-    public double FAIL_PERCENT_STD_DEV = 0.002;
+    public double FAIL_PERCENT = 0;   //no failure for interceptor CI/CD
+    public double FAIL_PERCENT_STD_DEV = 0; //no failure for interceptor CI/CD
     public static final String V1 = "v1";
     public static final String V2 = "v2";
     public String VERSION = "v1";

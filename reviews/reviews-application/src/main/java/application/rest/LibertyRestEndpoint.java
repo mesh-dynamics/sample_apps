@@ -45,8 +45,8 @@ public class LibertyRestEndpoint extends Application {
     private final static String ratings_service = "http://" + ratings_hostname + services_domain + ":9080/ratings";
 
     private Random random = new Random();
-    private static Double FAIL_PERCENT = 0.01;
-    private static Double FAIL_PERCENT_STD_DEV = 0.002;
+    private static Double FAIL_PERCENT = 0; //no failure for interceptor CI/CD
+    private static Double FAIL_PERCENT_STD_DEV = 0; //no failure for interceptor CI/CD
     private static long TIME_BETWEEN_RUNS = 60000L;
     private static int NUMBER_OF_REVIEWS = 2;
 
@@ -205,11 +205,12 @@ public class LibertyRestEndpoint extends Application {
         }
         requestTimeStamp = currentRequestTimeStamp;
 
-        if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .header(HttpHeaders.RETRY_AFTER, " :=120")
-                    .build();
-        }
+        //commenting to avoid random failures for interceptor CI/CD
+//        if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
+////            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+////                    .header(HttpHeaders.RETRY_AFTER, " :=120")
+////                    .build();
+////        }
       int starsReviewer1 = -1;
       int starsReviewer2 = -1;
 

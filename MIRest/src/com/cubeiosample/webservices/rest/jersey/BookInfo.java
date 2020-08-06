@@ -88,16 +88,17 @@ public class BookInfo {
             }
             requestTimeStamp = currentRequestTimeStamp;
 
-            if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
-                JSONObject detailsResult = null;
-                bookInfo.put("details", detailsResult);
-            } else {
+	        //commenting to avoid random failures for interceptor CI/CD
+//            if (random.nextDouble() < randomGuassianPercentGivenStdDevAndMean) {
+//                JSONObject detailsResult = null;
+//                bookInfo.put("details", detailsResult);
+//            } else {
                 response = RestUtils.callWithRetries(tracer,
                         bookDetailsService.path("details").path(String.format("%d", id)).request(MediaType.APPLICATION_JSON),
                         null, "GET", 3, config.ADD_TRACING_HEADERS);
                 result = new JSONObject(response.readEntity(String.class));
                 bookInfo.put("details", result);
-            }
+   //         }
             
             // get ratings
             response = RestUtils.callWithRetries(tracer, 
