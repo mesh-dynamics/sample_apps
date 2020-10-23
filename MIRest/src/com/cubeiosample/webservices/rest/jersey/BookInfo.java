@@ -34,10 +34,15 @@ public class BookInfo {
     private Double randomGuassianPercentGivenStdDevAndMean;
     private long requestTimeStamp;
 
-    private static String PRODUCTPAGE_URI = "http://productpage:9080";
-    private static String BOOKDETAILS_URI = "http://details:9080";
-    private static String BOOKRATINGS_URI = "http://ratings:9080";
-    private static String BOOKREVIEWS_URI = "http://reviews:9080";
+//    private static String PRODUCTPAGE_URI = "http://productpage:9080";
+//    private static String BOOKDETAILS_URI = "http://details:9080";
+//    private static String BOOKRATINGS_URI = "http://ratings:9080";
+//    private static String BOOKREVIEWS_URI = "http://reviews:9080";
+    
+    private static String PRODUCTPAGE_URI = "http://localhost:9000";
+    private static String BOOKDETAILS_URI = "http://localhost:9000/details";
+    private static String BOOKRATINGS_URI = "http://localhost:9000/ratings";
+    private static String BOOKREVIEWS_URI = "http://localhost:9000/reviews";
 
     public BookInfo(Tracer tracer, Config config) {
         ClientConfig clientConfig = new ClientConfig()
