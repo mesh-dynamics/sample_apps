@@ -74,3 +74,4 @@ local.properties
 
 # End of https://www.gitignore.io/api/eclipse
 /Moviebook_UI/node_modules
+/.idea
