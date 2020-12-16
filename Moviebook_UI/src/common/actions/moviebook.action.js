@@ -230,26 +230,3 @@ const moviebookActions = {
 };
 
 export default moviebookActions;
-
-// const getMovieDetails = (keywords) => {
-//   return async (dispatch) => {
-//     try {
-//       let movieList = await moviebookService.getMovieDetails(keywords);
-//       dispatch(success(movieList, Date.now()));
-//     } catch (error) {
-//       console.error("Failed to getMovieDetails", Date.now());
-//     }
-//   };
-
-//   function success(movieList, date) {
-//     return {
-//       type: moviebookConstants.LIST_MOVIES,
-//       data: movieList,
-//       date: date,
-//     };
-//   }
-// };
-
-// const moviebookActions = {
-//   getMovieDetails,
-// };

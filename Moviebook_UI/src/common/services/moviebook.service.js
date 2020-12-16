@@ -11,8 +11,6 @@ const getMovieDetails = async (token, keywords) => {
 	return await axios.get(url, { headers });
 };
 
-const rentMovie = async () => {};
-
 const fetchAllCategoryGroups = async (token) => {
 	const url = "https://run.mocky.io/v3/59b51440-bcc0-41b6-a3e5-223336dbd062";
 
@@ -88,5 +86,4 @@ export const moviebookService = {
 	createNewCategory,
 	getMovieDetails,
 	fetchMovieList,
-	rentMovie,
 };

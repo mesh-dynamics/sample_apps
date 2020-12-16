@@ -39,7 +39,6 @@ const LoginPage = (props) => {
 		setLoginErrorMessage(EMPTY_STRING);
 		if (credentialsPopulated()) {
 			login(username, password);
-			// TODO: handle network/server error
 		}
 	};
 
