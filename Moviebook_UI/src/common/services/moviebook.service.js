@@ -14,7 +14,7 @@ const getMovieDetails = async (token, keywords) => {
 };
 
 const fetchAllCategoryGroups = async (token) => {
-	const url = `${config.apiBaseUrl}/genre-groups`,
+	const url = `${config.apiBaseUrl}/genre-groups`;
 	// const url = "https://run.mocky.io/v3/59b51440-bcc0-41b6-a3e5-223336dbd062";
 
 	const headers = {
@@ -75,7 +75,7 @@ const createNewCategory = async (token, newCategoryGroup) => {
 };
 
 const deleteCategoryGroup = async (token, genreGroupId) => {
-	const url = `${config.apiBaseUrl}/delete-genre-group/${genreGroupId}`
+	const url = `${config.apiBaseUrl}/delete-genre-group/${genreGroupId}`;
 	// const url = "https://run.mocky.io/v3/b2624689-2649-4adf-8934-83ab2a66a239";
 
 	const headers = {
