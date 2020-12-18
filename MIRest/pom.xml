@@ -3,13 +3,9 @@
   <artifactId>MIRest</artifactId>
   <packaging>war</packaging>
   <name>MIRest</name>
+	<groupId>io.cube.sampleapps</groupId>
+	<version>V1-SNAPSHOT</version>
 
-
-	<parent>
-		<groupId>io.cube.sampleapps</groupId>
-		<artifactId>root</artifactId>
-		<version>V1-SNAPSHOT</version>
-	</parent>
 
   <dependencyManagement>
     <dependencies>
