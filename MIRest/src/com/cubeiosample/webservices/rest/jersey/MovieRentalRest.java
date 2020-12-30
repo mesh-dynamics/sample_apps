@@ -39,6 +39,7 @@ public class MovieRentalRest {
 	static ListMoviesCache lmc;
 	static JaegerTracer tracer;
 	static Config config;
+	static GRPCInfo grpcInfo;
 
 	private static StringBuffer twentykReviews = new StringBuffer();
 
@@ -57,6 +58,7 @@ public class MovieRentalRest {
 		  config = new Config();
 		  mv = new MovieRentals(tracer, config);
 		  lmc = new ListMoviesCache(mv, config);
+		  grpcInfo = new GRPCInfo(tracer, config);
 		} catch (ClassNotFoundException e) {
 			LOGGER.error("Couldn't initialize MovieRentals instance: " + e.toString());
 		} finally {
@@ -449,6 +451,25 @@ public class MovieRentalRest {
 		} catch (Exception e) {
 			LOGGER.error("Error while deleting the rentals");
 			return Response.serverError().type(MediaType.APPLICATION_JSON).entity("{\"err\":\"" + e.toString() + "\"}").build();
+		}
+	}
+
+	@GET
+	@Path("/getNearbyStores")
+	@Secured
+	public Response getNearbyStores(@Context HttpHeaders httpHeaders, @Context SecurityContext securityContext) {
+		try (Scope scope =  Tracing.startServerSpan(tracer, httpHeaders , "getNearbyStores")) {
+			scope.span().setTag("getNearbyStores", "get all nearby stores for user");
+			String username = securityContext.getUserPrincipal().getName();
+			JSONObject address = mv.getAddressForCustomer(username);
+			int latitude = Integer.valueOf(address.getString("latitude"));
+			int longitude = Integer.valueOf(address.getString("longitude"));
+			grpcInfo.getGRPCInfo(latitude, longitude, 10);
+
+			return Response.ok().build();
+		}catch (Exception e) {
+			LOGGER.error("Error while getting nearby stores");
+			return Response.serverError().type(MediaType.APPLICATION_JSON).entity(Map.of("error", e.toString())).build();
 		}
 	}
 
