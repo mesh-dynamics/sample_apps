@@ -10,6 +10,7 @@
         <module>MIClient</module>
         <module>Utils</module>
         <module>RestWrapJDBC</module>
+        <module>AddressService</module>
     </modules>
 
 </project>
