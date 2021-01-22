@@ -326,17 +326,18 @@ public class MovieRentals {
     	double rentalRate = getRentalRate(film_id);
 
     	JSONObject rentResult = updateRental(inventoryId, customer_id, staff_id);
-    	int numUpdates = rentResult.getInt("num_updates");
+	    // creating a test case when one ingress call creates two (same) egress call but with different response.
+	    // mock should be order sensitive and return 1st egress response for 1st egress call and 2nd response for 2nd egress call.
+	    inventoryId = getInventoryId(film_id, store_id);
+	    LOGGER.debug("second inventory Id "+inventoryId);
+
+	    int numUpdates = rentResult.getInt("num_updates");
     	result.put("num_updates", numUpdates);
     	if ( numUpdates < 0) {
     		return result;
     	}
     	result.put("rent", rentalRate*duration);
     	LOGGER.debug("rent movie result returning: " + result.toString());
-    	// creating a test case when one ingress call creates two (same) egress call but with different response.
-	    // mock should be order sensitive and return 1st egress response for 1st egress call and 2nd response for 2nd egress call.
-	    inventoryId = getInventoryId(film_id, store_id);
-	    LOGGER.debug("second inventory Id "+inventoryId);
     	return result;
     }
 
