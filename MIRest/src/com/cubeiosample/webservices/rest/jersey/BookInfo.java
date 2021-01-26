@@ -34,15 +34,12 @@ public class BookInfo {
     private Double randomGuassianPercentGivenStdDevAndMean;
     private long requestTimeStamp;
 
-//    private static String PRODUCTPAGE_URI = "http://productpage:9080";
-//    private static String BOOKDETAILS_URI = "http://details:9080";
-//    private static String BOOKRATINGS_URI = "http://ratings:9080";
-//    private static String BOOKREVIEWS_URI = "http://reviews:9080";
-    
-    private static String PRODUCTPAGE_URI = "http://localhost:9000";
-    private static String BOOKDETAILS_URI = "http://localhost:9000/details";
-    private static String BOOKRATINGS_URI = "http://localhost:9000/ratings";
-    private static String BOOKREVIEWS_URI = "http://localhost:9000/reviews";
+    /*
+    private static String PRODUCTPAGE_URI = "http://productpage:9080";
+    private static String BOOKDETAILS_URI = "http://details:9080";
+    private static String BOOKRATINGS_URI = "http://ratings:9080";
+    private static String BOOKREVIEWS_URI = "http://reviews:9080";
+     */
 
     public BookInfo(Tracer tracer, Config config) {
         ClientConfig clientConfig = new ClientConfig()
@@ -50,9 +47,12 @@ public class BookInfo {
                 .property(ClientProperties.CONNECT_TIMEOUT, 10000);
         restClient = ClientBuilder.newClient(clientConfig);
         //bookInfoService = restClient.target(PRODUCTPAGE_URI);
-        bookDetailsService = restClient.target(BOOKDETAILS_URI);
-        bookRatingsService = restClient.target(BOOKRATINGS_URI);
-        bookReviewsService = restClient.target(BOOKREVIEWS_URI);
+        LOGGER.info("INITIALIZING BOOK DETAILS URI TO :: " + config.BOOKDETAILS_URI);
+        LOGGER.info("INITIALIZING BOOK RATINGS URI TO :: " + config.BOOKRATINGS_URI);
+        LOGGER.info("INITIALIZING BOOK REVIEWS URI TO :: " + config.BOOKREVIEWS_URI);
+        bookDetailsService = restClient.target(config.BOOKDETAILS_URI);
+        bookRatingsService = restClient.target(config.BOOKRATINGS_URI);
+        bookReviewsService = restClient.target(config.BOOKREVIEWS_URI);
 
         this.tracer = tracer;
         this.config = config;
@@ -91,21 +91,28 @@ public class BookInfo {
                 JSONObject detailsResult = null;
                 bookInfo.put("details", detailsResult);
             } else {
+                String format = "full";
+                if (this.config.COMPACT_FORMAT) {
+                    format = "compact";
+                }
+                LOGGER.info("TRYING TO CONNECT TO BOOK DETAILS :: " + bookDetailsService.getUri().toString());
                 response = RestUtils.callWithRetries(tracer,
-                        bookDetailsService.path("details").path(String.format("%d", id)).request(MediaType.APPLICATION_JSON),
-                        null, "GET", 3, config.ADD_TRACING_HEADERS);
+                        bookDetailsService.path("details").path(String.format("%d", id)).queryParam("format", format)
+                            .request(MediaType.APPLICATION_JSON),null, "GET", 3, config.ADD_TRACING_HEADERS);
                 result = new JSONObject(response.readEntity(String.class));
                 bookInfo.put("details", result);
             }
             
             // get ratings
-            response = RestUtils.callWithRetries(tracer, 
+            LOGGER.info("TRYING TO CONNECT TO BOOK RATINGS :: " + bookRatingsService.getUri().toString());
+            response = RestUtils.callWithRetries(tracer,
         			bookRatingsService.path("ratings").path(String.format("%d", id)).request(MediaType.APPLICATION_JSON), 
         	   	    null, "GET", 3, config.ADD_TRACING_HEADERS);
             result = new JSONObject(response.readEntity(String.class));
             bookInfo.put("ratings", result);
 
             // get reviews
+            LOGGER.info("TRYING TO CONNECT TO BOOK REVIEWS :: " + bookReviewsService.getUri().toString());
             response = RestUtils.callWithRetries(tracer, 
         			bookReviewsService.path("reviews").path(String.format("%d", id)).request(MediaType.APPLICATION_JSON), 
         	   	    null, "GET", 3, config.ADD_TRACING_HEADERS);

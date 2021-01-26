@@ -1,5 +1,6 @@
 package com.cubeiosample.webservices.rest.jersey;
 
+import java.util.Optional;
 import java.util.Properties;
 
 import javax.inject.Singleton;
@@ -24,10 +25,14 @@ public class Config {
     public String MYSQL_PWD = "cubeio12";  // AWS RDS pwd
 
     // restwrapjdbc
-    // public String RESTWRAPJDBC_URI = "http://restwrapjdbc:8080/restsql";
-  	public String RESTWRAPJDBC_URI = "http://localhost:9000/restwrapjdbc/restsql";
+    public String RESTWRAPJDBC_URI = "http://restwrapjdbc:8080/restsql";
+    public String PRODUCTPAGE_URI = "http://productpage:9000";
+    public String BOOKDETAILS_URI = "http://details:9080";
+    public String BOOKRATINGS_URI = "http://ratings:9080";
+    public String BOOKREVIEWS_URI = "http://reviews:9080";
 
-    // Flags
+
+	// Flags
     public boolean USE_KUBE = false;
     
     //public static boolean USE_JDBC_SERVICE = true;
@@ -52,6 +57,8 @@ public class Config {
     public static final String V2 = "v2";
     public String VERSION = "v1";
     public double TIME_BETWEEN_RUNS = 60000;
+    public boolean COMPACT_FORMAT = false;
+    public static boolean DUMMY_AUTHENTICATION = false;
 	
 	public Config() {
 		LOGGER.info("Creating config");
@@ -59,10 +66,12 @@ public class Config {
 		properties = new java.util.Properties();
 		
 		try {
+			String conffile = fromEnvOrSystemProperties("CONFFILE").orElse(CONFFILE);
+			LOGGER.info("CONF FILE BEING USED : " + conffile);
             properties.load(this.getClass().getClassLoader().
-                    getResourceAsStream(CONFFILE));
+                    getResourceAsStream(conffile));
 		} catch(Exception eta){
-            LOGGER.error(String.format("Not able to load config file %s; using defaults", CONFFILE), eta);
+            LOGGER.error(String.format("Not able to load config file %s; using defaults"), eta);
 		}
         // mysql properties
         // host, username, pwd
@@ -83,8 +92,21 @@ public class Config {
         
 		// restwrapjdbc uri
         String restwrapjdbc_uri = this.getProperty("RESTWRAPJDBC_URI");
-        RESTWRAPJDBC_URI = (restwrapjdbc_uri == null) ? RESTWRAPJDBC_URI : restwrapjdbc_uri;      
-		
+        RESTWRAPJDBC_URI = (restwrapjdbc_uri == null) ? RESTWRAPJDBC_URI : restwrapjdbc_uri;
+
+        String productpage_uri = this.getProperty("PRODUCTPAGE_URI");
+        PRODUCTPAGE_URI = (productpage_uri == null) ? PRODUCTPAGE_URI : productpage_uri;
+
+        String bookdetails_uri = this.getProperty("BOOKDETAILS_URI");
+        BOOKDETAILS_URI = (bookdetails_uri == null) ? BOOKDETAILS_URI : bookdetails_uri;
+
+        String bookratings_uri = this.getProperty("BOOKRATINGS_URI");
+        BOOKRATINGS_URI = (bookratings_uri == null) ? BOOKRATINGS_URI : bookratings_uri;
+
+        String bookreviews_uri = this.getProperty("BOOKREVIEWS_URI");
+        BOOKREVIEWS_URI = (bookreviews_uri == null) ? BOOKREVIEWS_URI : bookreviews_uri;
+
+
 		// Flags
 		// use jdbc service
         // get book reviews
@@ -194,14 +216,37 @@ public class Config {
           ALWAYS_HIDE_LAST_NAME = true;
         }
 
+        // compact format settings
+        String compactFormat = System.getenv("COMPACT_FORMAT");
+        LOGGER.info("value for compact format  is :: " + compactFormat);
+        if (compactFormat != null) {
+          if (compactFormat.equalsIgnoreCase("true")) {
+            COMPACT_FORMAT = true;
+          } else {
+            COMPACT_FORMAT = false;
+          }
+        }
+
         if (USE_KUBE) {
         	overrideConfigWithKubeSettings();
+        }
+
+        //DUMMY_AUTHENTICATION
+        String dummyAuth = System.getenv("DUMMY_AUTHENTICATION");
+        LOGGER.info("value for DUMMY_AUTHENTICATION  is :: " + dummyAuth);
+        if (dummyAuth != null) {
+          if (dummyAuth.equalsIgnoreCase("true")) {
+            DUMMY_AUTHENTICATION = true;
+          } else {
+            DUMMY_AUTHENTICATION = false;
+          }
         }
 
         LOGGER.info("final value for concat bug is :: " + CONCAT_BUG);
         LOGGER.info("final value for number of actors to display is :: " + NUM_ACTORS_TO_DISPLAY);
         LOGGER.info("final value for use caching is :: " + USE_CACHING);
         LOGGER.info("final value for last name first is :: " + DISPLAYNAME_LASTFIRST);
+        LOGGER.info("final value for compact format  is :: " + COMPACT_FORMAT);
 
 	}
 	
@@ -215,9 +260,14 @@ public class Config {
 		}
 		return value;
 	}
-	
-	
-    private void configureUseKube() {
+
+	public static Optional<String> fromEnvOrSystemProperties(String propertyName) {
+		Optional<String> ret = Optional.ofNullable(System.getenv(propertyName));
+		return ret.isPresent() ? ret : Optional.ofNullable(System.getProperty(propertyName));
+	}
+
+
+	private void configureUseKube() {
     	String useKube = System.getenv("USE_KUBE");
        	LOGGER.debug("use_kube value:" + useKube);
         if (useKube != null && useKube.equalsIgnoreCase("true")) {
@@ -401,4 +451,3 @@ public class Config {
     }
 
 }
-
