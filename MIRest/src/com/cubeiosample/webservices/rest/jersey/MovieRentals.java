@@ -522,6 +522,18 @@ public class MovieRentals {
     	return ros.executeQuery(query, params);
 	}
 
+	public JSONObject getAddressForCustomer(String userName) throws Exception{
+		String query = "Select latitude, longitude from address where address_id=(select address_id from customer where email=?)";
+		JSONArray params = new JSONArray();
+		RestOverSql.addStringParam(params, userName);
+		JSONArray rs = ros.executeQuery(query, params);
+		if (rs == null || rs.length() < 1) {
+			LOGGER.error(String.format("No address  found for the name:%s", userName));
+			throw new Exception(String.format("Latitude and longitude not found for the name:%s", userName));
+		}
+		return rs.getJSONObject(0);
+	}
+
 
 //    public boolean IsBookBased(String title) {
 //    	return ExistsFilm(title);

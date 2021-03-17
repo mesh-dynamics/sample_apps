@@ -30,6 +30,7 @@ public class Config {
     public String BOOKDETAILS_URI = "http://details:9080";
     public String BOOKRATINGS_URI = "http://ratings:9080";
     public String BOOKREVIEWS_URI = "http://reviews:9080";
+    public String GRPC_URI = "localhost:8980";
 
 
 	// Flags
@@ -105,6 +106,9 @@ public class Config {
 
         String bookreviews_uri = this.getProperty("BOOKREVIEWS_URI");
         BOOKREVIEWS_URI = (bookreviews_uri == null) ? BOOKREVIEWS_URI : bookreviews_uri;
+
+        String grpc_uri = this.getProperty("GRPC_URI");
+        GRPC_URI = (grpc_uri == null) ? GRPC_URI : grpc_uri;
 
 
 		// Flags

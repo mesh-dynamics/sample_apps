@@ -1,33 +1,31 @@
 package com.cubeiosample.webservices.rest.jersey;
 // TODO: change the package name to com.cubeio.samples.MIRest
 
+import io.cube.utils.Tracing;
+import io.jaegertracing.internal.JaegerTracer;
+import io.opentracing.Scope;
 import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
-
 import javax.ws.rs.core.UriInfo;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import io.cube.utils.Tracing;
-import io.jaegertracing.internal.JaegerTracer;
-import io.opentracing.Scope;
 
 
 // TODO: @Secured decorators are all commented out since we have to modify request matching during replay and analysis to ignore certain fields.
@@ -39,6 +37,7 @@ public class MovieRentalRest {
 	static ListMoviesCache lmc;
 	static JaegerTracer tracer;
 	static Config config;
+	static GRPCInfo grpcInfo;
 
 	private static StringBuffer twentykReviews = new StringBuffer();
 
@@ -57,6 +56,7 @@ public class MovieRentalRest {
 		  config = new Config();
 		  mv = new MovieRentals(tracer, config);
 		  lmc = new ListMoviesCache(mv, config);
+		  grpcInfo = new GRPCInfo(config);
 		} catch (ClassNotFoundException e) {
 			LOGGER.error("Couldn't initialize MovieRentals instance: " + e.toString());
 		} finally {
@@ -448,6 +448,33 @@ public class MovieRentalRest {
 		} catch (Exception e) {
 			LOGGER.error("Error while deleting the rentals");
 			return Response.serverError().type(MediaType.APPLICATION_JSON).entity("{\"err\":\"" + e.toString() + "\"}").build();
+		}
+	}
+
+	/**
+	 * length is in kms
+	 *
+	 * @param httpHeaders
+	 * @param securityContext
+	 * @param length
+	 * @return
+	 */
+	@GET
+	@Path("/getNearbyStores")
+	@Secured
+	public Response getNearbyStores(@Context HttpHeaders httpHeaders, @Context SecurityContext securityContext, @QueryParam("length") Integer length) {
+		try (Scope scope =  Tracing.startServerSpan(tracer, httpHeaders , "getNearbyStores")) {
+			int lengthValue = length != null ? length : 10;
+			scope.span().setTag("getNearbyStores", "get all nearby stores for user");
+			String username = securityContext.getUserPrincipal().getName();
+			JSONObject address = mv.getAddressForCustomer(username);
+			int latitude = Integer.valueOf(address.getString("latitude"));
+			int longitude = Integer.valueOf(address.getString("longitude"));
+			JSONArray response = grpcInfo.getNearByStores(latitude, longitude, lengthValue);
+			return Response.ok().type(MediaType.APPLICATION_JSON).entity(response.toString()).build();
+		}catch (Exception e) {
+			LOGGER.error("Error while getting nearby stores");
+			return Response.serverError().type(MediaType.APPLICATION_JSON).entity(Map.of("error", e.toString())).build();
 		}
 	}
 
