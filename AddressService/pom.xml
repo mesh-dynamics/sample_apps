@@ -8,8 +8,17 @@
     <version>V1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
+  <groupId>io.cube.sampleapps</groupId>
+  <version>5</version>
+  <artifactId>addressservice</artifactId>
 
-  <artifactId>AddressService</artifactId>
+<!--  <distributionManagement>-->
+<!--    <repository>-->
+<!--      <id>github</id>-->
+<!--      <name>GitHub OWNER Apache Maven Packages</name>-->
+<!--      <url>https://maven.pkg.github.com/cube-io-corp/sample_apps</url>-->
+<!--    </repository>-->
+<!--  </distributionManagement>-->
 
 <dependencies>
   <dependency>
@@ -40,22 +49,21 @@
     <version>3.0.0-beta-1</version>
   </dependency>
 
-  <dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-databind</artifactId>
-    <version>2.11.1</version>
-  </dependency>
+<!--  <dependency>-->
+<!--    <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--    <artifactId>jackson-databind</artifactId>-->
+<!--    <version>2.11.1</version>-->
+<!--  </dependency>-->
   <dependency>
     <groupId>javax.ws.rs</groupId>
     <artifactId>javax.ws.rs-api</artifactId>
-    <version>2.1.1</version>
+    <version>2.1</version>
     <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>log4j</groupId>
     <artifactId>log4j</artifactId>
     <version>1.2.17</version>
-    <scope>compile</scope>
   </dependency>
   <dependency>
     <groupId>org.glassfish.jersey.core</groupId>
@@ -111,7 +119,7 @@
           <configuration>
             <transformers>
               <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                <mainClass>io.grpc.examples.routeguide.RouteGuideServer</mainClass>
+                <mainClass>io.cube.sampleapps.AddressService.AddressService</mainClass>
               </transformer>
             </transformers>
           </configuration>

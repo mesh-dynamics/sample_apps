@@ -24,8 +24,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,31 +36,20 @@ import org.json.JSONObject;
 public class AddressService {
 
 	private static RestOverSql ros = null;
-	private static final Logger LOGGER = Logger.getLogger(AddressService.class.getName());
+	final static Logger LOGGER;
+
+	static {
+		LOGGER  = org.apache.log4j.Logger.getLogger(AddressService.class);
+		BasicConfigurator.configure();
+	}
 
 	private final int port;
 	private final Server server;
-
-
-	static String STORE_BASE_URL = System.getenv("STORE_SERVICE_URL");
-	static String StoreServerTarget = STORE_BASE_URL != null ? STORE_BASE_URL : "localhost:9000/store";
-	static ManagedChannel storeServerChannel = ManagedChannelBuilder.forTarget(StoreServerTarget).usePlaintext().intercept().build();
-	//	static GuiderBlockingStub guiderServerBlockingStub = GuiderGrpc.newBlockingStub(guiderServerChannel);
-	// 	static GuiderStub guiderServerAsyncStub = GuiderGrpc.newStub(guiderServerChannel);
-
+	
 
 	static String RESTWRAPJDBC_BASE_URL = System.getenv("RESTWRAPJDBC_URI");
 	static String RestWrapJDBCServerTarget = RESTWRAPJDBC_BASE_URL != null ? RESTWRAPJDBC_BASE_URL : "http://localhost:8086/RestWrapJDBC/restsql/";
 
-
-
-	private static void info(String msg, Object... params) {
-		LOGGER.log(Level.INFO, msg, params);
-	}
-
-	private static void warning(String msg, Object... params) {
-		LOGGER.log(Level.WARNING, msg, params);
-	}
 
 	public AddressService(int port) throws IOException {
 		this(port, AddressServiceUtils.getDefaultFeaturesFile());
@@ -79,7 +69,7 @@ public class AddressService {
 		Collection<Address> features) {
 		this.port = port;
 		server = serverBuilder.addService(
-			ServerInterceptors.intercept(new AddressServiceInternal(features)))
+			ServerInterceptors.intercept(new AddressServiceInternal(features), new HeaderServerInterceptor()))
 			.build();
 		ros = new RestOverSql(RestWrapJDBCServerTarget);
 	}
@@ -166,7 +156,7 @@ public class AddressService {
 					addressId = rs.getJSONObject(0).getInt("address_id");
 				}
 			} catch (Exception sqlException) {
-				LOGGER.severe("Couldn't execute get address stmt: " + sqlException.toString());
+				LOGGER.error("Couldn't execute get address stmt: " + sqlException.toString());
 			}
 			Address Address = io.cube.sampleapps.AddressService.Address.newBuilder().setAddressId(addressId).setLocation(request).build();
 //			Address Address = io.cube.sampleapps.AddressService.Address.newBuilder().build();
@@ -218,6 +208,7 @@ public class AddressService {
 				LOGGER.info("Inside listStore method. Running query to fetch stores");
 				rs = ros.executeQuery(addressQuery, params);
 				if (rs != null) {
+					LOGGER.info("Got response of length " + rs.length() + "from restwrapjdbc");
 					for (int i = 0; i < rs.length(); i++) {
 						JSONObject jo = rs.getJSONObject(i);
 						Builder storeBuilder = Store.newBuilder();
@@ -233,22 +224,11 @@ public class AddressService {
 
 						Store store = storeBuilder.build();
 
-
-//						.setStoreId(jo.getInt("store_id"))
-//							.setAddressId(jo.getInt("address_id"))
-//							.setAddress(jo.getString("address"))
-//							.setDistrict(jo.getString("district"))
-//							.setCity(jo.getString("city"))
-//							.setCountry(jo.getString("country"))
-//							.setLatitude(jo.getInt("latitude"))
-//							.setLongitude(jo.getInt("longitude"))
-//							.setDescription(jo.getString("description"))
-//							.build();
 						responseObserver.onNext(store);
 					}
 				}
 			} catch (Exception sqlException) {
-				LOGGER.severe("Couldn't execute get store stmt. Message: " + sqlException.toString()
+				LOGGER.error("Couldn't execute get store stmt. Message: " + sqlException.toString()
 					+ "\nStack Trace:" + Arrays.toString(sqlException.getStackTrace()));
 			} finally {
 				responseObserver.onCompleted();

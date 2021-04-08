@@ -56,7 +56,7 @@ public class MovieRentalRest {
 		  config = new Config();
 		  mv = new MovieRentals(tracer, config);
 		  lmc = new ListMoviesCache(mv, config);
-		  grpcInfo = new GRPCInfo(config);
+		  grpcInfo = new GRPCInfo(tracer, config);
 		} catch (ClassNotFoundException e) {
 			LOGGER.error("Couldn't initialize MovieRentals instance: " + e.toString());
 		} finally {

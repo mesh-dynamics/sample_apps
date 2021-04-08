@@ -72,7 +72,9 @@ public class RestOverSql {
 	    response = RestUtils.callWithRetries(tracer, 
 	        restJDBCService.path("query").queryParam("querystring", query).queryParam("params", UriComponent.encode(params.toString(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED)).request(MediaType.APPLICATION_JSON), 
 	        null, "GET", 3, config.ADD_TRACING_HEADERS);
-	    JSONArray result = new JSONArray(response.readEntity(String.class));
+		  String responseEntity = response.readEntity(String.class);
+		  LOGGER.debug("responseEntity: " + responseEntity );
+	    JSONArray result = new JSONArray(responseEntity);
 	    if (result != null) {
 	    	LOGGER.debug("Query: " + query + "; " + params.toString() + "; NumRows=" + result.length());
 	    }

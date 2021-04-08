@@ -5,3 +5,5 @@ RUN rm -rf /usr/local/tomcat/webapps/ROOT
 # reduced time from 360 s to 6s!
 RUN perl -0777 -i -pe 's/securerandom.source=file:\/dev\/random/securerandom.source=file:\/dev\/urandom/' /etc/java-11-openjdk/security/java.security
 ADD target/MIRest-V1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+#RUN sed -i 's/port="8080"/port="80"/' /usr/local/tomcat/conf/server.xml
+#EXPOSE 80

@@ -18,9 +18,9 @@ FROM openjdk:11.0-jre AS PROD
 #FROM cubeiocorp/jre:11 AS PROD
 
 
-COPY --from=build AddressService/target/AddressService-V1-SNAPSHOT.jar /root.jar
+COPY --from=build AddressService/target/addressservice-5.jar /root.jar
 COPY --from=build AddressService/src/main/resources/io/cube/sampleapps/AddressService/dd-java-agent-0.68.0.jar /dd-java.jar
 
-CMD ["java", "-javaagent:/dd-java.jar", "-jar", "/root.jar"]
+CMD ["java", "-javaagent:/dd-java.jar", "-Ddd.propagation.style.extract=B3", "-Ddd.propagation.style.inject=B3", "-jar", "/root.jar" ]
 
 EXPOSE 8087

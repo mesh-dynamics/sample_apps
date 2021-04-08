@@ -6,3 +6,4 @@ RUN rm -rf /usr/local/tomcat/webapps/ROOT
 # reduced time from 360 s to 6s!
 RUN perl -0777 -i -pe 's/securerandom.source=file:\/dev\/random/securerandom.source=file:\/dev\/urandom/' /etc/java-11-openjdk/security/java.security
 ADD target/RestWrapJDBC-V1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+#EXPOSE 8080
