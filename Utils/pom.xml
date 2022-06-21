@@ -8,7 +8,7 @@
 		<version.dockerfile-maven>1.4.9</version.dockerfile-maven>
 		<version.jaeger>0.32.0</version.jaeger>
 		<version.json>20180813</version.json>
-		<version.mysql>5.1.46</version.mysql>
+		<version.mysql>8.0.28</version.mysql>
 		<version.log4j>1.2.17</version.log4j>
 	</properties>
 
